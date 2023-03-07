@@ -13,9 +13,8 @@ class Posts
     public $type_visa;
     public $date_depart;
     public $date_arriver;
-    public $type;
+    public $type_document;
     public $numero_document;
-    public $date_reservation;
 
     public function __construct($connection)
     {
@@ -24,7 +23,7 @@ class Posts
 
     public function read()
     {
-        $query = 'SELECT * FROM client ORDER BY date_reservation DESC';
+        $query = 'SELECT * FROM client';
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 
@@ -33,9 +32,9 @@ class Posts
 
     public function read_single()
     {
-        $query = 'SELECT * FROM client WHERE id = ?';
+        $query = 'SELECT * FROM client WHERE token = ?';
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->id);
+        $stmt->bindParam(1, $this->token);
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -50,9 +49,8 @@ class Posts
         $this->type_visa = $row['type_visa'];
         $this->date_depart = $row['date_depart'];
         $this->date_arriver = $row['date_arriver'];
-        $this->type = $row['type'];
+        $this->type_document = $row['type_document'];
         $this->numero_document = $row['numero_document'];
-        $this->date_reservation = $row['date_reservation'];
     }
 
     public function create()
@@ -67,9 +65,8 @@ class Posts
         `type_visa` = :type_visa, 
         `date_depart` = :date_depart, 
         `date_arriver` = :date_arriver, 
-        `type` = :type, 
-        `numero_document` = :numero_document, 
-        `date_reservation` = :date_reservation';
+        `type_document` = :type_document, 
+        `numero_document` = :numero_document';
 
         $stmt = $this->conn->prepare($query);
 
@@ -82,9 +79,59 @@ class Posts
         $stmt->bindParam(':type_visa', $this->type_visa);
         $stmt->bindParam(':date_depart', $this->date_depart);
         $stmt->bindParam(':date_arriver', $this->date_arriver);
-        $stmt->bindParam(':type', $this->type);
+        $stmt->bindParam(':type_document', $this->type_document);
         $stmt->bindParam(':numero_document', $this->numero_document);
-        $stmt->bindParam(':date_reservation', $this->date_reservation);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function update()
+    {
+        $query = 'UPDATE client SET 
+        `nom_complet` = :nom_complet,
+        `naissance` = :naissance,
+        `nationalite` = :nationalite, 
+        `situation` = :situation, 
+        `address` = :address, 
+        `type_visa` = :type_visa, 
+        `date_depart` = :date_depart, 
+        `date_arriver` = :date_arriver, 
+        `type_document` = :type_document, 
+        `numero_document` = :numero_document
+        WHERE `token` = :token';
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':nom_complet', $this->nom_complet);
+        $stmt->bindParam(':naissance', $this->naissance);
+        $stmt->bindParam(':nationalite', $this->nationalite);
+        $stmt->bindParam(':situation', $this->situation);
+        $stmt->bindParam(':address', $this->address);
+        $stmt->bindParam(':type_visa', $this->type_visa);
+        $stmt->bindParam(':date_depart', $this->date_depart);
+        $stmt->bindParam(':date_arriver', $this->date_arriver);
+        $stmt->bindParam(':type_document', $this->type_document);
+        $stmt->bindParam(':numero_document', $this->numero_document);
+        $stmt->bindParam(':token', $this->token);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function delete()
+    {
+        $query = 'DELETE FROM client WHERE `token` = :token';
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':token', $this->token);
 
         if ($stmt->execute()) {
             return true;

@@ -33,9 +33,8 @@ if($numRow > 0){
             'type_visa' => $type_visa,
             'date_depart' => $date_depart,
             'date_arriver' => $date_arriver,
-            'type' => $type,
+            'type_document' => $type_document,
             'numero_document' => $numero_document,
-            'date_reservation' => $date_reservation
         );
 
         array_push($posts_array['data'], $post_items);

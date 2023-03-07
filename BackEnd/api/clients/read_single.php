@@ -11,8 +11,8 @@ $conn = $database->connect();
 
 $post = new Posts($conn);
 
-if(isset($_GET['id'])){
-    $post->id = $_GET['id'];
+if (isset($_GET['token'])) {
+    $post->token = $_GET['token'];
 } else {
     die();
 }
@@ -30,10 +30,8 @@ $post_arr = array(
     'type_visa' => $post->type_visa,
     'date_depart' => $post->date_depart,
     'date_arriver' => $post->date_arriver,
-    'type' => $post->type,
-    'numero_document' => $post->numero_document,
-    'date_reservation' => $post->date_reservation
+    'type_document' => $post->type_document,
+    'numero_document' => $post->numero_document
 );
 
 print_r(json_encode($post_arr));
-
