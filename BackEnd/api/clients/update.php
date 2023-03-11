@@ -1,9 +1,8 @@
 <?php
 
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-header('Access-Controle-Allow-Method: PUT');
-header('Access-Controle-Allow-Headers: Access-Controle-Allow-Headers, Content-Type, Access-Controle-Allow-Method, X-Requested-With');
+header('Access-Control-Allow-Methods: PUT');
+header('Access-Control-Allow-Headers: Content-Type');
 
 
 include_once '../../config/Database.php';

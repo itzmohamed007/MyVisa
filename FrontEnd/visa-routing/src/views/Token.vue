@@ -19,9 +19,6 @@ export default {
       textToCopy: localStorage.getItem("token"),
     };
   },
-  mounted() {
-    localStorage.removeItem("token");
-  },
   methods: {
     async copyToClipboard() {
       try {

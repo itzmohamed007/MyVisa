@@ -12,13 +12,14 @@ $conn = $database->connect();
 
 $post = new Posts($conn);
 
+
 if (isset($_GET['token'])) {
     $post->token = $_GET['token'];
 } else {
     die();
 }
 
-$post->read_single();
+$post->updateData();
 
 $post_arr = array(
     'id' => $post->id,
@@ -32,7 +33,9 @@ $post_arr = array(
     'date_depart' => $post->date_depart,
     'date_arriver' => $post->date_arriver,
     'type_document' => $post->type_document,
-    'numero_document' => $post->numero_document
+    'numero_document' => $post->numero_document,
+    'reservation_date' => $post->reservation_date,
+    'reservation_time' => $post->reservation_time
 );
 
 echo (json_encode($post_arr));

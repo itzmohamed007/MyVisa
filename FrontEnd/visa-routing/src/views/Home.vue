@@ -1,137 +1,39 @@
 <template>
-  <div class="Form my-5">
-    <h1 class>Reservation Form</h1>
-  </div>
-  <div class="px-4 px-lg-5 mt-5">
-    <div class="form-wrapper gx-4 gx-lg-5 mb-5 bg-light rounded-4 p-5">
-      <form class="container px-5" @submit.prevent="submitHandle()">
-        <div class="row justify-content-between">
-          <div class="col-lg-6 col-md-12">
-            <div class="form-floating mb-3">
-              <input class="form-control" type="text" v-model="data.fullName" />
-              <label>Full Name:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input class="form-control" type="date" v-model="data.birth" />
-              <label>Birth Date:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input class="form-control" type="text" v-model="data.nationality"/>
-              <label>Nationality:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <select class="cpt-4 form-select form-control" aria-label="Default select" 
-              v-model="data.situation">
-                <option>Single</option>
-                <option>Married</option>
-                <option>Widow</option>
-              </select>
-              <label>Familial Situation:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input class="form-control" type="email" v-model="data.email" />
-              <label>Email:</label>
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-12">
-            <div class="form-floating mb-3">
-              <select class="cpt-4 form-select form-control" aria-label="Default select" v-model="data.visaType">
-                <option value="long">Long Stay Visa</option>
-                <option vualu="hamza">Long Short Visa</option>
-              </select>
-              <label>Visa Type:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input class="form-control" type="date" v-model="data.startDate"/>
-              <label>Start Date:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input class="form-control" type="date" v-model="data.endDate" />
-              <label>End Date:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <select class="cpt-4 form-select form-control" aria-label="Default select" 
-              v-model="data.documentType">
-                <option>Identity Card</option>
-                <option>Passport</option>
-              </select>
-              <label>Document Type:</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input class="form-control" type="number" v-model="data.documentNumber"/>
-              <label>Document Number:</label>
-            </div>
-          </div>
-          <div class="submit mt-5">
-            <button>Reserve</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
+  <section class="hero d-flex flex-column gap-2 justify-content-center">
+    <h1 class="mb-3">MyVisa</h1>
+    <p class="text-dark">Applying for a visa has never been easier! Our online <br> application process is quick and easy to use.</p>
+    <button class="btn" @click="redirect()">Get Started</button>
+  </section>
 </template>
 
-<script>
-import router from "../router";
-import axios from "axios";
-
-export default {
-  data() {
-    return {
-      data: {
-        token: "",
-        fullName: "",
-        birth: "",
-        nationality: "",
-        situation: "",
-        email: "",
-        visaType: "",
-        startDate: "",
-        endDate: "",
-        documentType: "",
-        documentNumber: ""
-      },
-    };
-  },
-  methods: {
-    async submitHandle() {
-      try {
-        let result = await axios.post("http://localhost/MyVisa/backend/api/clients/create.php",this.data, {
-            headers: {
-              "Content-Type": null,
-            },
-          }
-        );
-        localStorage.setItem("token", result.data.token);
-        router.push("/token");
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
-};
-</script>
-
-
 <style scoped>
-button {
-  padding: 10px 50px;
-  background-color: rgb(88, 88, 88);
-  transition: 0.5s ease-in-out;
-  color: #fff;
-  margin-top: 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.hero {
+  height: 100vh;
+  background: linear-gradient(to bottom, white, #333);
 }
-button:hover {
-  background: rgb(116, 116, 116);
+.hero h1 {
+  font-size: 3rem;
 }
-.submit {
-  text-align: center;
+.hero button {
+  background-color: black;
+  color: white;
+  align-self: center;
+  padding: 5px 20px;
+  border-radius: 30px;
+  transition: 1s ease-in-out;
 }
-.token-p {
-  padding: 8px 0;
-  background-color: green;
+.hero button:hover {
+  border-radius: 0;
 }
 </style>
+
+<script>
+import router from '@/router'
+export default {
+  methods: {
+    redirect() {
+      router.push('/form')
+    }
+  }
+}
+</script>

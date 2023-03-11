@@ -4,6 +4,7 @@ class Posts
     private $conn;
 
     public $id;
+    public $id_client;
     public $token;
     public $nom_complet;
     public $naissance;
@@ -15,6 +16,8 @@ class Posts
     public $date_arriver;
     public $type_document;
     public $numero_document;
+    public $reservation_date;
+    public $reservation_time;
 
     public function __construct($connection)
     {
@@ -138,5 +141,70 @@ class Posts
         } else {
             return false;
         }
+    }
+
+    public function checkReservation() {
+        $query = "SELECT * FROM `reservation` WHERE date = :date AND time = :time";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':date', $this->reservation_date);
+        $stmt->bindParam(':time', $this->reservation_time);
+
+        if($stmt->execute()) {
+            return $stmt;
+        } else {
+            return json_encode([
+                'status' => "404",
+                'message' => 'no time found'
+            ]);
+        }
+    }
+
+    public function reservation()
+    {
+        $query = 'INSERT INTO reservation SET 
+        `id_client` = :id_client,
+        `date` = :reservation_date,
+        `time` = :reservation_time';
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(':id_client', $this->id_client);
+        $stmt->bindParam(':reservation_date', $this->reservation_date);
+        $stmt->bindParam(':reservation_time', $this->reservation_time);
+
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateData() {
+        $query = 'SELECT client.*, reservation.date, reservation.time
+            from client
+            LEFT JOIN reservation
+            on reservation.id_client = client.id
+            WHERE client.token = :token';
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':token', $this->token);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->id = $row['id'];
+        $this->token = $row['token'];
+        $this->nom_complet = $row['nom_complet'];
+        $this->naissance = $row['naissance'];
+        $this->nationalite = $row['nationalite'];
+        $this->situation = $row['situation'];
+        $this->address = $row['address'];
+        $this->type_visa = $row['type_visa'];
+        $this->date_depart = $row['date_depart'];
+        $this->date_arriver = $row['date_arriver'];
+        $this->type_document = $row['type_document'];
+        $this->numero_document = $row['numero_document'];
+        $this->reservation_date = $row['date'];
+        $this->reservation_time = $row['time'];
     }
 }

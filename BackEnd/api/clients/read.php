@@ -1,7 +1,7 @@
 <?php
-
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
+header('Access-Control-Allow-Methods: GET');
+header('Access-Control-Allow-Headers: Content-Type');
 
 include_once '../../config/Database.php';
 include_once '../../model/Posts.php';
@@ -17,7 +17,6 @@ $numRow = $result->rowCount();
 if($numRow > 0){
 
     $posts_array = array();
-    $posts_array['data'] = array();
 
     while($row = $result->fetch(PDO::FETCH_ASSOC)){
         extract($row);
@@ -37,7 +36,7 @@ if($numRow > 0){
             'numero_document' => $numero_document,
         );
 
-        array_push($posts_array['data'], $post_items);
+        $posts_array[] = $post_items;
     }
 
     echo json_encode($posts_array);

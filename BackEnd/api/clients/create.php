@@ -1,10 +1,7 @@
 <?php
-
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-header('Access-Controle-Allow-Method: POST');
-header('Access-Controle-Allow-Headers: Access-Control-Allow-Origin, Access-Controle-Allow-Headers, Content-Type, Access-Controle-Allow-Method, X-Requested-With');
-
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
 
 include_once '../../config/Database.php';
 include_once '../../model/Posts.php';
@@ -15,7 +12,7 @@ $conn = $database->connect();
 $post = new Posts($conn);
 
 $data = json_decode(file_get_contents('php://input'));
-// $this->token = uniqid();
+
 $token = uniqid();
 $post->token = $token;
 $post->nom_complet = $data->nom_complet;
