@@ -1,6 +1,6 @@
 <template>
   <div class="Form my-5">
-    <h1 class>Reservation Form</h1>
+    <h1>Reservation Form</h1>
   </div>
   <div class="px-4 px-lg-5 mt-5">
     <div class="form-wrapper gx-4 gx-lg-5 mb-5 bg-light rounded-4 p-5">
@@ -36,8 +36,8 @@
           <div class="col-lg-6 col-md-12">
             <div class="form-floating mb-3">
               <select class="cpt-4 form-select form-control" aria-label="Default select" v-model="data.type_visa">
-                <option value="long">Long Stay Visa</option>
-                <option vualu="hamza">Long Short Visa</option>
+                <option>Long Stay Visa</option>
+                <option>Long Short Visa</option>
               </select>
               <label>Visa Type:</label>
             </div>
@@ -78,33 +78,28 @@ import axios from "axios";
 export default {
   data() {
     return {
-      data: {
-        token: "",
-        nom_complet: "",
-        naissance: "",
-        nationalite: "",
-        situation: "",
-        address: "",
-        type_visa: "",
-        date_depart: "",
-        date_arriver: "",
-        type_document: "",
-        numero_document: ""
-      },
+      data: {},
     };
   },
   methods: {
     async submitHandle() {
       try {
-        let response = await axios.post("http://localhost/MyVisa/backend/api/clients/create.php",this.data, {
+        let response = await axios.post("http://localhost/MyVisa/myapi/api/create.php",this.data, {
             headers: {
               "Accept": "Application/json",
             },
           }
         );
+        if(response.data.errors != undefined) {
+          alert(response.data.errors.join('\n'))
+          return;
+        } else if(response.data.message == 'Missing Required Fields') {
+          alert(response.data.message)
+          return
+        } 
         localStorage.setItem("token", response.data.token);
-        router.push("/token");
         console.log(response)
+        router.push("/token");
       } catch (error) {
         console.error(error);
       }
@@ -113,7 +108,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 h1 {
   margin-top: 6rem;
 }

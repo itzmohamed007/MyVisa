@@ -3,7 +3,7 @@
     <div class="home">
       <div class="form-floating mb-3">
         <input class="form-control" type="text" placeholder="Access Token" v-model="token"/>
-        <label for="phone">Access Token</label>
+        <label>Access Token</label>
       </div>
       <p class="bg-danger text-white rounded">{{ token_error }}</p>
       <p class="bg-warning text-white rounded">{{ token_not_found }}</p>
@@ -11,30 +11,31 @@
       <button class="track btn" @click="getData()">Track</button>
     </div>
   </section>
-  <section class="mb-5 data rounded d-flex flex-column justify-content-center" v-if="visible">
-    <h2>Happy To See You Back <span class="fw-bold text-white">{{ name }}</span></h2>
+  <section class="data mb-5 rounded d-flex flex-column justify-content-center" v-if="visible">
+    <h2>Happy To See You Back <span class="fw-bold text-white">{{ data.nom_complet }}</span></h2>
     <div class="fs-6 text-start mx-5 text-black">
-      <p class="">Token: <span class="text-white fw-bold">{{ token }}</span></p> 
-      <p class="">Birth Date: <span class="text-white fw-bold">{{ naissance }}</span></p> 
-      <p class="">Nationality: <span class="text-white fw-bold">{{ nationalite }}</span></p>  
-      <p class="">Familial Situation: <span class="text-white fw-bold">{{ situation }}</span></p>  
-      <p class="">Email Address: <span class="text-white fw-bold">{{ address }}</span></p>  
-      <p class="">Visa Type: <span class="text-white fw-bold">{{ type_visa }}</span></p>  
-      <p class="">Check-In Date: <span class="text-white fw-bold">{{ date_depart }}</span></p>  
-      <p class="">Check-Out Date: <span class="text-white fw-bold">{{ date_arriver }}</span></p>  
-      <p class="">Document Type: <span class="text-white fw-bold">{{ type_document }}</span></p>  
-      <p class="">Document Number: <span class="text-white fw-bold">{{ numero_document }}</span></p>  
-      <p class="">Status: <span class="text-white fw-bold">In Progress</span></p> 
+      <p>Token: <span>{{ data.token }}</span></p> 
+      <p>Birth Date: <span>{{ data.naissance }}</span></p> 
+      <p>Nationality: <span>{{ data.nationalite }}</span></p>  
+      <p>Familial Situation: <span>{{ data.situation }}</span></p>  
+      <p>Email Address: <span>{{ data.address }}</span></p>  
+      <p>Visa Type: <span>{{ data.type_visa }}</span></p>  
+      <p>Check-In Date: <span>{{ data.date_depart }}</span></p>  
+      <p>Check-Out Date: <span>{{ data.date_arriver }}</span></p>  
+      <p>Document Type: <span>{{ data.type_document }}</span></p>  
+      <p>Document Number: <span>{{ data.numero_document }}</span></p>  
+      <p>Status: <span>In Progress</span></p> 
     </div>
     <div class="options d-flex justify-content-between mt-5">
-      <button class="btn bg-success text-white rounded-5 update">Update</button>
-      <button class="btn bg-danger text-white rounded-5 update">Delete</button>
+      <button class="btn bg-success text-white rounded-5 update" @click="update">Update</button>
+      <button class="btn bg-danger text-white rounded-5 update" @click="remove">Delete</button>
     </div>
   </section>
 </template>
 
 <script>
 import axios from 'axios'
+import router from '@/router'
 export default {
   data() {
     return {
@@ -43,16 +44,7 @@ export default {
       token_error: '',
       token_found: '',
       token_not_found: '',
-      name: 'Mohamed Bourra',
-      naissance: '',
-      nationalite: '',
-      situation: '',
-      address: '',
-      type_visa: '',
-      date_depart: '',
-      date_arriver: '',
-      type_document: '',
-      numero_document: ''
+      data: {}
     }
   },
   methods: {
@@ -63,29 +55,33 @@ export default {
         this.token_not_found = ''
         this.visible = false
       } else {
-        let response = await axios.get('http://localhost/MyVisa/backend/api/clients/updateData.php?token=' + this.token)
+        localStorage.setItem('token', this.token)
+        let response = await axios.get('http://localhost/MyVisa/myapi/api/updateData.php?token=' + this.token)
         if(response.data.address != undefined) {
-          console.log(response.data)
           this.visible = true
           this.token_found = 'Token Found!'
           this.token_not_found = ''
           this.token_error = ''
-
-          this.address = response.data.address
-          this.date_depart = response.data.date_depart
-          this.date_arriver = response.data.date_arriver
-          this.naissance = response.data.naissance
-          this.nationalite = response.data.nationalite
-          this.numero_document = response.data.numero_document
-          this.type_document = response.data.type_document
-          this.type_visa = response.data.type_visa
-          this.situation = response.data.situation
+          this.data = response.data
         } else {
           this.token_not_found = 'Token Not Found'
           this.token_error = ''
           this.token_found = ''
           this.visible = false
         }
+      }
+    },
+    update() {
+      router.push('/update/' + this.token)
+    },
+    remove() {
+      try {
+        axios.delete('http://localhost/MyVisa/myapi/api/delete.php?token=' + this.token)
+        localStorage.clear()
+        alert('Folder Deleted Successfully')
+        router.push('/')
+      } catch(e) {
+        console.log(e)
       }
     }
   }
@@ -109,6 +105,10 @@ export default {
 }
 .data h2 {
   margin-bottom: 4rem;
+}
+.data span {
+  color: white;
+  font-weight: bold;
 }
 .registration {
   height: 75vh;

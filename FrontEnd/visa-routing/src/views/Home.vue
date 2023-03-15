@@ -9,7 +9,7 @@
 <style scoped>
 .hero {
   height: 100vh;
-  background: linear-gradient(to bottom, white, #333);
+  background: linear-gradient(to bottom, white, #646464);
 }
 .hero h1 {
   font-size: 3rem;
@@ -32,7 +32,12 @@ import router from '@/router'
 export default {
   methods: {
     redirect() {
-      router.push('/form')
+      let token = localStorage.getItem('token')
+      if(token != undefined) {
+        alert('You Are Already Loged In!')
+      } else {
+        router.push('/form')
+      }
     }
   }
 }

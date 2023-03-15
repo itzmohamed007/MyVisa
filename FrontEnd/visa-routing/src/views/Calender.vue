@@ -1,6 +1,6 @@
 <template>
   <div class="container p-5 mt-5">
-    <div class="">
+    <div>
       <h1 class="mb-5">Reservation Form:</h1>
         <div class="d-flex flex-column bg-light rouned p-5 g-4">
           <div class="calender w-100 p-5 border rounded-3">
@@ -64,18 +64,23 @@ export default {
   methods: {
     async check() {
       let date = localStorage.getItem('date')
-      let response = await axios.get('http://localhost/MyVisa/backend/api/clients/reservation_filter.php?date=' + date + '&time=' + this.time)
+      let response = await axios.get('http://localhost/MyVisa/myapi/api/reservation_filter.php?date=' + date + '&time=' + this.time)
       if(response.data.message == "Reservation Available") {
-        let res = await axios.get('http://localhost/MyVisa/backend/api/clients/read_single.php?token=' + localStorage.getItem('token'))
-        let id = res.data.id
-        // creating reservation
-       await axios.post('http://localhost/MyVisa/backend/api/clients/reservation.php', {
+        let id = localStorage.getItem('id')
+        let temp = await axios.post('http://localhost/MyVisa/myapi/api/reservation.php', {
           'id_client': id,
           'reservation_date': date,
           'reservation_time': this.time
         })
+        console.log(temp)
         router.push('/')
-      } 
+      } else if(response.data.message == 'Missing Required Fields') {
+        alert(response.data.message)
+        return
+      } else if(response.data.errors != undefined) {
+        alert(response.data.errors.join('\n'))
+        return
+      }
       else {
         alert('Reservation Unavailable')
       }

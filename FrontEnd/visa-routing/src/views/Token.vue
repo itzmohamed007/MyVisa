@@ -11,18 +11,23 @@
 </template>
 
 <script>
+import axios from 'axios';
 import router from "../router";
 export default {
   data() {
     return {
       token: localStorage.getItem("token"),
-      textToCopy: localStorage.getItem("token"),
     };
+  },
+  async mounted() {
+    let response = await axios.get('http://localhost/MyVisa/myapi/api/updateData.php?token=' + this.token)
+    localStorage.removeItem('date')
+    localStorage.setItem('id', response.data.id)
   },
   methods: {
     async copyToClipboard() {
       try {
-        await navigator.clipboard.writeText(this.textToCopy);
+        await navigator.clipboard.writeText(this.token);
         alert("Token Copied To Clipboard!");
         router.push("/calender");
       } catch (err) {
