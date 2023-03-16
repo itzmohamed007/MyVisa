@@ -156,19 +156,13 @@ class ClientReservation
     }
 
     public function checkReservation() {
-        $query = "SELECT * FROM `reservation` WHERE date = :date AND time = :time";
+        $query = "SELECT `time` FROM `reservation` WHERE date = :date";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':date', $this->reservation_date);
-        $stmt->bindParam(':time', $this->reservation_time);
 
-        if($stmt->execute()) {
-            return $stmt;
-        } else {
-            return json_encode([
-                'status' => "404",
-                'message' => 'no time found'
-            ]);
-        }
+        $stmt->execute();
+
+        return $stmt;
     }
 
     public function reservation()
@@ -189,6 +183,13 @@ class ClientReservation
         } else {
             return false;
         }
+    }
+
+    public function getAllEvents() {
+        $query = 'SELECT date FROM `reservation`';
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
     }
 
     public function updateData() {

@@ -71,11 +71,8 @@
         <div class="w-100 p-5 d-flex flex-column align-items-center">
           <h2 class="mb-5">Choose A Timing:</h2>
           <div class="form-floating w-50">
-            <select class="form-select form-control" aria-label="Default select" v-model="data.reservation_time" >
-              <option>08:30-10:00</option>
-              <option>10:30-12:30</option>
-              <option>02:30-04:00</option>
-              <option>04:30-06:30</option>
+            <select class="form-select form-control" aria-label="Default select" v-model="selected_time">
+              <option v-for="time in filtered_times" :key="time.id">{{ time }}</option>
             </select>
             <label>Type de Chambre</label>
           </div>
@@ -103,15 +100,31 @@ export default {
       update_visibility: false,
       data: {},
       token: "",  
-      time: "",
+      selected_time: '',
+      time: '',
+      times: ["08:30-10:00", "10:30-12:30", "02:30-04:00", "04:30-06:30"],
+      filtered_times: [],
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
         weekends: false,
-        events: false,
+        events: [],
         selectable: true    ,
-        dateClick: function(info) {
-          localStorage.setItem('date', info.dateStr)
+        dateClick: async (info) => {
+          localStorage.setItem("date", info.dateStr);
+          await axios.get("http://localhost/MyVisa/myapi/api/reservation_filter.php?date=" + info.dateStr)
+          .then((response) => {
+            if (response.data != 0) {
+              this.filtered_times.length = 0
+              this.filtered_times = this.filtered_times.concat(
+                this.times.filter((time) => !response.data.includes(time))
+              );
+              console.log(this.filtered_times);
+            } else {
+              console.log("this day contain no reservations");
+              this.filtered_times = this.times.slice()
+            }
+          });
         },
         validRange: function(currentDate) {
           var startDate = new Date(currentDate.valueOf())
@@ -127,22 +140,27 @@ export default {
   },
   components: {FullCalendar},
   async mounted() {
+    this.fetch_events()
     this.token = this.$route.params.token
     let temp = await axios.get('http://localhost/MyVisa/myapi/api/updateData.php?token=' + this.token)
     this.data = temp.data
     console.log(this.data)
   },
   methods: {
+    async fetch_events() {
+      await axios.get("http://localhost/MyVisa/myapi/api/getEvents.php")
+      .then((response) => {
+        this.calendarOptions.events = response.data.dates;
+      });
+    },
     async check() {
-      let response = await axios.get('http://localhost/MyVisa/myapi/api/reservation_filter.php?date=' + this.data.reservation_date + '&time=' + this.data.reservation_time)
-      console.log('reservation date: ' + this.data.reservation_date + ', reservation time: ' + this.data.reservation_time)
-      if(response.data.message == "Reservation Available") {
+      let response = await axios.get('http://localhost/MyVisa/myapi/api/reservation_filter.php?date=' + this.data.reservation_date)
+      if(response.data.message == "Missing Required Fields" || response.data.message == 'invalid reservation date') {
         console.log(response)
-        alert('Reservation Available')
+        alert('Missing Required Fields')
+      } else {
         this.check_visibility = false
         this.update_visibility = true
-      } else {
-        alert('Reservation Unavailable')
       }
     },
     async update()  {
@@ -150,6 +168,7 @@ export default {
         this.data.reservation_date = localStorage.getItem('date')
       }
       try {
+        this.data.reservation_date = this.selected_time
         let res = await axios.put('http://localhost/MyVisa/myapi/api/update.php?token=' + this.token, this.data)
         console.log(res)
         if(res.data.errors != undefined) {

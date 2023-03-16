@@ -13,7 +13,7 @@ $reservation = new ClientReservation($conn);
 
 $data = json_decode(file_get_contents('php://input'));
 
-if (!isset($data->id_client) || !isset($data->reservation_date) || !isset($data->reservation_time)) {
+if (empty($data->id_client) || empty($data->reservation_date) || empty($data->reservation_time)) {
     echo json_encode(
         array(
             'message' => 'Missing Required Fields'
@@ -32,6 +32,6 @@ if ($reservation->reservation()) {
     );
 } else {
     echo json_encode(
-        array('message' => 'Reservation Creation Failed')
+        array('message' => 'Reservation Creation Failed') 
     );
 }

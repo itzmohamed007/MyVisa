@@ -56,14 +56,14 @@ nav ul a {
   text-decoration: none;
   color: black;
   transition: .5s ease-in-out;
-  margin-left: 1rem;
+  text-align: start;
 }
 nav ul a:hover {
   color: rgb(113, 113, 113);
   cursor: pointer;
 }
 nav ul li {
-  align-self: start!important;;
+  text-align: start!important;
 }
 
 @media (max-width: 768px) {
