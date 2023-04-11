@@ -94,18 +94,22 @@ class Posts
 
     public function update()
     {
-        $query = 'UPDATE client SET 
-        `nom_complet` = :nom_complet,
-        `naissance` = :naissance,
-        `nationalite` = :nationalite, 
-        `situation` = :situation, 
-        `address` = :address, 
-        `type_visa` = :type_visa, 
-        `date_depart` = :date_depart, 
-        `date_arriver` = :date_arriver, 
-        `type_document` = :type_document, 
-        `numero_document` = :numero_document
-        WHERE `token` = :token';
+        $query = 'UPDATE client JOIN reservation
+        ON client.id = reservation.id_client
+        SET 
+        client.`nom_complet` = :nom_complet,
+        client.`naissance` = :naissance,
+        client.`nationalite` = :nationalite, 
+        client.`situation` = :situation, 
+        client.`address` = :address, 
+        client.`type_visa` = :type_visa, 
+        client.`date_depart` = :date_depart, 
+        client.`date_arriver` = :date_arriver, 
+        client.`type_document` = :type_document, 
+        client.`numero_document` = :numero_document,
+        reservation.`date` = :reservation_date,
+        reservation.`time` = :reservation_time
+        WHERE client.`token` = :token';
 
         $stmt = $this->conn->prepare($query);
 
@@ -119,6 +123,8 @@ class Posts
         $stmt->bindParam(':date_arriver', $this->date_arriver);
         $stmt->bindParam(':type_document', $this->type_document);
         $stmt->bindParam(':numero_document', $this->numero_document);
+        $stmt->bindParam(':reservation_date', $this->reservation_date);
+        $stmt->bindParam(':reservation_time', $this->reservation_time);
         $stmt->bindParam(':token', $this->token);
 
         if ($stmt->execute()) {
@@ -191,7 +197,7 @@ class Posts
         $stmt->execute();
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         $this->id = $row['id'];
         $this->token = $row['token'];
         $this->nom_complet = $row['nom_complet'];
@@ -206,5 +212,6 @@ class Posts
         $this->numero_document = $row['numero_document'];
         $this->reservation_date = $row['date'];
         $this->reservation_time = $row['time'];
+
     }
 }

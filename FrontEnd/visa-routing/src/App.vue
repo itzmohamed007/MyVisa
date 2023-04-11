@@ -11,30 +11,12 @@
         <ul class="navbar-nav">
           <router-link class="nav-item" to="/">Home</router-link>
           <router-link class="nav-item" to="/track">Track</router-link>
-          <li @click="logout()"><a class="nav-item">Logout</a></li>
         </ul>
       </div>
     </div>
 </nav>
 <router-view />
 </template>
-
-<script>
-import router from '@/router'
-export default {
-  methods: {
-    logout() {
-      if(localStorage.getItem('token') == undefined) {
-        alert('You Are Not Logged In')
-        router.push('/track')
-      } else {
-        router.push('/logout')
-      }
-    }
-  }
-}
-</script>
-
 
 
 <style>
@@ -57,6 +39,7 @@ nav ul a {
   color: black;
   transition: .5s ease-in-out;
   text-align: start;
+  margin-left: 1rem;
 }
 nav ul a:hover {
   color: rgb(113, 113, 113);
@@ -68,8 +51,6 @@ nav ul li {
 
 @media (max-width: 768px) {
   nav ul a{
-    text-align: start;
-    margin-right: 0;
     margin-left: 0;
   }
 }

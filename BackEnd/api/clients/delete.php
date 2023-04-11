@@ -12,12 +12,12 @@ $conn = $database->connect();
 
 $post = new Posts($conn);
 
-$data = json_decode(file_get_contents('php://input'));
-
-$post->token = $data->token;
+if(isset($_GET['token'])) {
+    $post->token = $_GET['token'];
+}
 
 if ($post->delete()) {
-    echo json_encode(
+    echo json_encode(   
         array('message' => 'Post Deleted Successfully')
     );
 } else {

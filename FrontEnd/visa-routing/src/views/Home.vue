@@ -34,7 +34,7 @@ export default {
     redirect() {
       let token = localStorage.getItem('token')
       if(token != undefined) {
-        alert('You Are Already Loged In!')
+        alert('You have already a reservation!')
       } else {
         router.push('/form')
       }
